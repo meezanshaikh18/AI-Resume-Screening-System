@@ -1,0 +1,221 @@
+
+/* =========================================
+   AI RESUME SCREENING SYSTEM
+   Custom Design System
+   ========================================= */
+
+:root {
+    --paper: #F5F0E7;
+    --olive: #777B54;
+    --sand: #D8CCB9;
+    --orange: #C45B35;
+    --white: #FFFFFF;
+}
+
+/* Main application */
+.stApp {
+    background-color: var(--paper);
+}
+
+/* Main content spacing */
+.block-container {
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+    max-width: 1400px;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+    color: var(--olive) !important;
+    font-weight: 650 !important;
+    letter-spacing: -0.5px;
+}
+
+p, label, span {
+    font-family: sans-serif;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: var(--orange);
+    color: var(--white);
+    border: 1px solid var(--orange);
+    border-radius: 6px;
+    padding: 0.55rem 1.2rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.stButton > button:hover {
+    background-color: var(--olive);
+    border-color: var(--olive);
+    color: var(--white);
+}
+
+/* Text areas and input fields */
+.stTextArea textarea,
+.stTextInput input {
+    background-color: var(--white);
+    color: var(--olive);
+    border: 1px solid var(--sand);
+    border-radius: 7px;
+}
+
+.stTextArea textarea:focus,
+.stTextInput input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 1px var(--orange);
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] {
+    background-color: var(--white);
+    border: 1px dashed var(--sand);
+    border-radius: 9px;
+    padding: 1rem;
+}
+
+[data-testid="stFileUploader"] button {
+    background-color: var(--orange);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+}
+
+/* Cards and containers */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: var(--white);
+    border-color: var(--sand);
+    border-radius: 10px;
+}
+
+/* Dividers */
+hr {
+    border-color: var(--sand);
+}
+
+/* Alerts */
+[data-testid="stAlert"] {
+    border-radius: 7px;
+    border: 1px solid var(--sand);
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: var(--white);
+    border-right: 1px solid var(--sand);
+}
+
+/* File names and captions */
+.stCaption {
+    color: var(--olive);
+}
+
+/* Remove default header decoration */
+#MainMenu {
+    visibility: hidden;
+}
+
+
+/* =========================================
+   LAYOUT REFINEMENTS
+   ========================================= */
+
+.stMainBlockContainer {
+    width: 100%;
+    max-width: 1400px;
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+
+/* Consistent text color */
+.stMarkdown,
+.stMarkdown p,
+.stMarkdown li,
+.stText,
+label {
+    color: var(--olive);
+}
+
+/* =========================================
+   CUSTOM STATUS MESSAGE COLORS
+   ========================================= */
+
+[data-testid="stAlert"] {
+    background: var(--white) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 7px !important;
+}
+
+[data-testid="stAlert"] p {
+    color: var(--olive) !important;
+}
+
+/* Alert icons */
+[data-testid="stAlert"] svg {
+    color: var(--olive) !important;
+}
+
+/* =========================================
+   SECTION SPACING
+   ========================================= */
+
+h1 {
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+h3 {
+    margin-top: 1rem;
+}
+
+/* =========================================
+   FILE UPLOAD REFINEMENT
+   ========================================= */
+
+[data-testid="stFileUploaderDropzone"] {
+    background-color: var(--paper) !important;
+    border: 1px dashed var(--sand) !important;
+    border-radius: 8px !important;
+}
+
+[data-testid="stFileUploaderDropzone"] button {
+    background-color: var(--orange) !important;
+    color: var(--white) !important;
+}
+
+/* Wider recruiter workspace */
+[data-testid="stMainBlockContainer"],
+.block-container {
+    width: min(1400px, calc(100% - 4rem)) !important;
+    max-width: 1400px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Neutral information and status panels */
+[data-testid="stAlert"] {
+    background-color: var(--white) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 8px !important;
+    color: var(--olive) !important;
+}
+
+[data-testid="stAlert"] p {
+    color: var(--olive) !important;
+}
+
+/* Better input spacing */
+.stTextArea textarea {
+    min-height: 240px;
+    padding: 14px;
+}
+
+/* Consistent section spacing */
+[data-testid="stVerticalBlock"] {
+    gap: 1rem;
+}
