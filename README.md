@@ -288,5 +288,5 @@ employment and privacy requirements.
 **Meezan Shaikh**
 
 -   GitHub: [@meezanshaikh18](https://github.com/meezanshaikh18)
--   Repository:
-    [AI-Resume-Screening-System](https://github.com/meezanshaikh18/AI-Resume-Screening-System)
+-   LinkedIn: [Meezan Shaikh](https://www.linkedin.com/in/meezanshaikh18/)
+    

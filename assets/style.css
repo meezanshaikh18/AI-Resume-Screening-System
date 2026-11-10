@@ -1,221 +1,402 @@
 
-/* =========================================
-   AI RESUME SCREENING SYSTEM
-   Custom Design System
-   ========================================= */
+/* =====================================================
+   HIREAI — CUSTOM DESIGN SYSTEM
+   AI Resume Screening & Candidate Ranking System
+   ===================================================== */
 
 :root {
     --paper: #F5F0E7;
+    --ink: #20211D;
+    --orange: #C45B35;
     --olive: #777B54;
     --sand: #D8CCB9;
-    --orange: #C45B35;
     --white: #FFFFFF;
+
+    --text-primary: #20211D;
+    --text-secondary: #55564B;
+    --border-color: #D8CCB9;
 }
 
-/* Main application */
+/* =====================================================
+   1. GLOBAL APPLICATION
+   ===================================================== */
+
 .stApp {
-    background-color: var(--paper);
+    background-color: var(--paper) !important;
+    color: var(--ink) !important;
 }
 
-/* Main content spacing */
-.block-container {
-    padding-top: 2.5rem;
-    padding-bottom: 3rem;
-    max-width: 1400px;
+[data-testid="stHeader"] {
+    background: rgba(245, 240, 231, 0.96);
 }
 
-/* Typography */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+/* Main workspace spacing */
+
+.main .block-container {
+    max-width: 1450px !important;
+    padding: 2.2rem 3rem 3rem !important;
+}
+
+/* =====================================================
+   2. TYPOGRAPHY
+   ===================================================== */
+
 h1, h2, h3, h4 {
-    color: var(--olive) !important;
-    font-weight: 650 !important;
+    color: var(--ink) !important;
+    font-weight: 750 !important;
     letter-spacing: -0.5px;
+    opacity: 1 !important;
 }
 
-p, label, span {
+p, label, li {
+    color: var(--text-primary);
     font-family: sans-serif;
 }
 
-/* Buttons */
-.stButton > button {
-    background-color: var(--orange);
-    color: var(--white);
-    border: 1px solid var(--orange);
-    border-radius: 6px;
+.stMarkdown,
+.stMarkdown p,
+.stMarkdown li {
+    color: var(--text-primary);
+}
+
+/* Dashboard headings */
+
+.page-title {
+    color: var(--ink) !important;
+    font-size: 2.05rem;
+    font-weight: 800;
+}
+
+.page-subtitle {
+    color: var(--text-secondary) !important;
+    font-size: 0.96rem;
+}
+
+.brand-kicker {
+    color: #A94B2C !important;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* =====================================================
+   3. SIDEBAR — DARK CHARCOAL THEME
+   ===================================================== */
+
+[data-testid="stSidebar"] {
+    background-color: var(--ink) !important;
+    border-right: 1px solid var(--sand);
+}
+
+[data-testid="stSidebar"] > div {
+    background-color: var(--ink) !important;
+}
+
+/* All sidebar text */
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] .stMarkdown,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+    color: var(--paper) !important;
+}
+
+/* Sidebar navigation */
+
+[data-testid="stSidebar"] [data-testid="stRadio"] label {
+    color: var(--paper) !important;
+    opacity: 1 !important;
+    border-radius: 9px;
+    padding: 0.55rem 0.7rem;
+}
+
+[data-testid="stSidebar"] [data-testid="stRadio"] label p {
+    color: var(--paper) !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+    background-color: rgba(245, 240, 231, 0.10);
+}
+
+/* Sidebar radio controls */
+
+[data-testid="stSidebar"] [data-testid="stRadio"] svg {
+    color: var(--orange) !important;
+}
+
+/* Sidebar divider */
+
+[data-testid="stSidebar"] hr {
+    border-color: rgba(216, 204, 185, 0.3) !important;
+}
+
+/* Sidebar captions */
+
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+    color: var(--sand) !important;
+}
+
+/* =====================================================
+   4. DASHBOARD METRIC CARDS
+   ===================================================== */
+
+.metric-card {
+    background-color: var(--white) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 15px;
+    padding: 1.1rem 1.2rem;
+    min-height: 128px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 16px rgba(32, 33, 29, 0.07);
+}
+
+.metric-label {
+    color: var(--text-secondary) !important;
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.metric-value {
+    color: var(--ink) !important;
+    font-size: 1.9rem;
+    font-weight: 850;
+    margin-top: 0.45rem;
+}
+
+.metric-note {
+    color: #555B3C !important;
+    font-size: 0.76rem;
+    margin-top: 0.2rem;
+}
+
+/* =====================================================
+   5. PANELS AND CANDIDATE CARDS
+   ===================================================== */
+
+.panel,
+.candidate-card {
+    background-color: var(--white) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 14px;
+    padding: 1rem 1.15rem;
+    color: var(--ink) !important;
+}
+
+.panel p,
+.candidate-card p {
+    color: var(--ink) !important;
+}
+
+.small-muted {
+    color: var(--text-secondary) !important;
+    font-size: 0.83rem;
+}
+
+/* Candidate match score */
+
+.score-pill {
+    display: inline-block;
+    background-color: #F3E5DC;
+    color: #A94B2C !important;
+    border-radius: 20px;
+    padding: 0.3rem 0.7rem;
+    font-weight: 800;
+}
+
+/* =====================================================
+   6. BUTTONS
+   ===================================================== */
+
+.stButton > button,
+.stDownloadButton > button {
+    background-color: var(--orange) !important;
+    color: var(--white) !important;
+    border: 1px solid var(--orange) !important;
+    border-radius: 8px !important;
     padding: 0.55rem 1.2rem;
-    font-weight: 600;
-    transition: background-color 0.2s ease;
+    font-weight: 650;
+    transition: all 0.2s ease;
 }
 
-.stButton > button:hover {
-    background-color: var(--olive);
-    border-color: var(--olive);
-    color: var(--white);
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    background-color: #A94B2C !important;
+    border-color: #A94B2C !important;
+    color: var(--white) !important;
 }
 
-/* Text areas and input fields */
+.stButton > button:disabled {
+    opacity: 0.55;
+}
+
+/* =====================================================
+   7. INPUTS AND TEXT AREAS
+   ===================================================== */
+
 .stTextArea textarea,
 .stTextInput input {
-    background-color: var(--white);
-    color: var(--olive);
-    border: 1px solid var(--sand);
-    border-radius: 7px;
+    background-color: var(--white) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 9px !important;
 }
 
 .stTextArea textarea:focus,
 .stTextInput input:focus {
-    border-color: var(--orange);
-    box-shadow: 0 0 0 1px var(--orange);
+    border-color: var(--orange) !important;
+    box-shadow: 0 0 0 1px var(--orange) !important;
 }
 
-/* File uploader */
+.stTextArea textarea::placeholder,
+.stTextInput input::placeholder {
+    color: #77766D !important;
+}
+
+.stTextArea textarea {
+    min-height: 220px;
+    padding: 14px;
+}
+
+/* =====================================================
+   8. FILE UPLOADER
+   ===================================================== */
+
 [data-testid="stFileUploader"] {
-    background-color: var(--white);
-    border: 1px dashed var(--sand);
-    border-radius: 9px;
-    padding: 1rem;
+    background-color: var(--white) !important;
+    border: 1px dashed var(--sand) !important;
+    border-radius: 12px;
+    padding: 0.8rem;
+}
+
+[data-testid="stFileUploaderDropzone"] {
+    background-color: var(--paper) !important;
+    border: 1px dashed var(--sand) !important;
+    border-radius: 9px !important;
+}
+
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] span {
+    color: var(--ink) !important;
 }
 
 [data-testid="stFileUploader"] button {
-    background-color: var(--orange);
-    color: var(--white);
-    border: none;
-    border-radius: 5px;
+    background-color: var(--orange) !important;
+    color: var(--white) !important;
+    border: none !important;
+    border-radius: 6px !important;
 }
 
-/* Cards and containers */
+/* =====================================================
+   9. DATA TABLES
+   ===================================================== */
+
+[data-testid="stDataFrame"] {
+    background-color: var(--white) !important;
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+}
+
+/* =====================================================
+   10. EXPANDERS
+   ===================================================== */
+
+[data-testid="stExpander"] {
+    background-color: var(--white) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] summary p {
+    color: var(--ink) !important;
+    font-weight: 650;
+}
+
+/* =====================================================
+   11. ALERTS AND STATUS MESSAGES
+   ===================================================== */
+
+[data-testid="stAlert"] {
+    background-color: var(--white) !important;
+    border: 1px solid var(--sand) !important;
+    border-radius: 9px !important;
+}
+
+[data-testid="stAlert"] p {
+    color: var(--ink) !important;
+}
+
+[data-testid="stAlert"] svg {
+    color: var(--olive) !important;
+}
+
+/* =====================================================
+   12. PROGRESS BARS
+   ===================================================== */
+
+.stProgress > div > div > div {
+    background-color: var(--orange) !important;
+}
+
+/* =====================================================
+   13. METRICS AND CAPTIONS
+   ===================================================== */
+
+[data-testid="stMetricLabel"] {
+    color: var(--text-secondary) !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: var(--ink) !important;
+}
+
+[data-testid="stCaptionContainer"] {
+    color: var(--text-secondary) !important;
+}
+
+/* =====================================================
+   14. DIVIDERS AND CONTAINERS
+   ===================================================== */
+
+hr {
+    border-color: var(--sand) !important;
+}
+
 [data-testid="stVerticalBlockBorderWrapper"] {
     background-color: var(--white);
     border-color: var(--sand);
     border-radius: 10px;
 }
 
-/* Dividers */
-hr {
-    border-color: var(--sand);
-}
+/* =====================================================
+   15. RESPONSIVE LAYOUT
+   ===================================================== */
 
-/* Alerts */
-[data-testid="stAlert"] {
-    border-radius: 7px;
-    border: 1px solid var(--sand);
-}
+@media screen and (max-width: 900px) {
+    .main .block-container {
+        padding: 1.5rem 1rem 2rem !important;
+    }
 
-/* Sidebar */
-[data-testid="stSidebar"] {
-    background-color: var(--white);
-    border-right: 1px solid var(--sand);
-}
+    .page-title {
+        font-size: 1.65rem;
+    }
 
-/* File names and captions */
-.stCaption {
-    color: var(--olive);
-}
-
-/* Remove default header decoration */
-#MainMenu {
-    visibility: hidden;
-}
-
-
-/* =========================================
-   LAYOUT REFINEMENTS
-   ========================================= */
-
-.stMainBlockContainer {
-    width: 100%;
-    max-width: 1400px;
-    padding-left: 3rem;
-    padding-right: 3rem;
-}
-
-/* Consistent text color */
-.stMarkdown,
-.stMarkdown p,
-.stMarkdown li,
-.stText,
-label {
-    color: var(--olive);
-}
-
-/* =========================================
-   CUSTOM STATUS MESSAGE COLORS
-   ========================================= */
-
-[data-testid="stAlert"] {
-    background: var(--white) !important;
-    border: 1px solid var(--sand) !important;
-    border-radius: 7px !important;
-}
-
-[data-testid="stAlert"] p {
-    color: var(--olive) !important;
-}
-
-/* Alert icons */
-[data-testid="stAlert"] svg {
-    color: var(--olive) !important;
-}
-
-/* =========================================
-   SECTION SPACING
-   ========================================= */
-
-h1 {
-    margin-bottom: 0.5rem;
-}
-
-h2 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.8rem;
-}
-
-h3 {
-    margin-top: 1rem;
-}
-
-/* =========================================
-   FILE UPLOAD REFINEMENT
-   ========================================= */
-
-[data-testid="stFileUploaderDropzone"] {
-    background-color: var(--paper) !important;
-    border: 1px dashed var(--sand) !important;
-    border-radius: 8px !important;
-}
-
-[data-testid="stFileUploaderDropzone"] button {
-    background-color: var(--orange) !important;
-    color: var(--white) !important;
-}
-
-/* Wider recruiter workspace */
-[data-testid="stMainBlockContainer"],
-.block-container {
-    width: min(1400px, calc(100% - 4rem)) !important;
-    max-width: 1400px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-/* Neutral information and status panels */
-[data-testid="stAlert"] {
-    background-color: var(--white) !important;
-    border: 1px solid var(--sand) !important;
-    border-radius: 8px !important;
-    color: var(--olive) !important;
-}
-
-[data-testid="stAlert"] p {
-    color: var(--olive) !important;
-}
-
-/* Better input spacing */
-.stTextArea textarea {
-    min-height: 240px;
-    padding: 14px;
-}
-
-/* Consistent section spacing */
-[data-testid="stVerticalBlock"] {
-    gap: 1rem;
+    .metric-card {
+        min-height: 110px;
+    }
 }

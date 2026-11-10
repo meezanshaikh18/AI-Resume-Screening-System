@@ -3,7 +3,7 @@ from src.matching_engine import (
     calculate_skill_match,
     calculate_text_similarity,
     calculate_experience_match,
-    calculate_education_match,
+    calculate_education_match_details,
 )
 
 
@@ -27,7 +27,10 @@ def calculate_candidate_score(
     if set(weights) != set(DEFAULT_WEIGHTS):
         raise ValueError("Weights must contain exactly the four criteria.")
 
-    if any(not isinstance(v, (int, float)) or v < 0 for v in weights.values()):
+    if any(
+        not isinstance(v, (int, float)) or v < 0
+        for v in weights.values()
+    ):
         raise ValueError("Weights must be non-negative numbers.")
 
     if sum(weights.values()) <= 0:
@@ -87,30 +90,38 @@ def calculate_candidate_score(
         active_weights["experience"] = weights["experience"]
 
     # Education
-    required_education = job.get(
-        "education", {}
-    ).get("qualifications", [])
+    required_education = job.get("education", {})
+    candidate_education = candidate.get("education", {})
 
-    if required_education:
-        candidate_education = candidate.get(
-            "education", {}
-        ).get("qualifications", [])
+    required_qualifications = (
+        required_education.get("qualifications", [])
+        if isinstance(required_education, dict)
+        else required_education
+    )
 
-        components["education"] = calculate_education_match(
+    if required_qualifications:
+        education_result = calculate_education_match_details(
             candidate_education,
             required_education,
         )
 
-        active_weights["education"] = weights["education"]
+        components["education"] = education_result
 
-    # Calculate final score
+        education_score = education_result.get("score")
+
+        # Exclude education from the overall score when evidence
+        # is unavailable, rather than treating missing data as zero.
+        if education_score is not None:
+            active_weights["education"] = weights["education"]
+
+    # Calculate final score using available criteria.
     total_weight = sum(active_weights.values())
 
     if total_weight == 0:
         return {
             "overall_score": None,
             "components": components,
-            "active_weights": active_weights,
+            "active_weights": {},
             "status": "insufficient_data",
         }
 
@@ -120,6 +131,9 @@ def calculate_candidate_score(
         value = components[criterion]
 
         if criterion == "skills":
+            value = value["score"]
+
+        elif criterion == "education":
             value = value["score"]
 
         weighted_score += value * weight

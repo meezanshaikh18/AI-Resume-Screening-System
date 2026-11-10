@@ -1,20 +1,28 @@
 
 import re
 
-from src.skill_extractor import (
-    extract_skills,
-    SKILL_DATABASE,
-)
+from src.skill_extractor import extract_skills
 from src.education_extractor import extract_education
 
 
 def extract_experience_requirement(text: str) -> float | None:
-    """Extract minimum years of experience from job description."""
+    """Extract minimum years of experience from a job description."""
 
     patterns = [
-        r"(\d+(?:\.\d+)?)\+?\s*years?\s+of\s+experience",
-        r"minimum\s+of\s+(\d+(?:\.\d+)?)\s+years?",
-        r"at\s+least\s+(\d+(?:\.\d+)?)\s+years?",
+        # Experience Required: 5+ years
+        r"experience\s*(?:required|needed|level)?\s*[:\-]\s*(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)",
+
+        # Minimum 5 years / Minimum of 5 years
+        r"minimum\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)",
+
+        # At least 5 years
+        r"at\s+least\s+(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)",
+
+        # 5+ years of experience
+        r"(\d+(?:\.\d+)?)\s*\+\s*(?:years?|yrs?)\s+of\s+(?:(?:relevant|professional)\s+)*experience",
+
+        # 5 years of relevant professional experience
+        r"(\d+(?:\.\d+)?)\s*(?:years?|yrs?)\s+of\s+(?:(?:relevant|professional)\s+)*experience",
     ]
 
     for pattern in patterns:
@@ -27,22 +35,68 @@ def extract_experience_requirement(text: str) -> float | None:
 
 
 def extract_job_title(text: str) -> str | None:
-    """Extract a job title from a Job Title or Position heading."""
+    """
+    Extract a job title from:
+    1. Explicit labels such as Job Title: or Position:
+    2. The first meaningful heading in the job description.
+    """
 
-    pattern = r"(?:job\s+title|position|role)\s*:\s*([^\n]+)"
+    explicit_pattern = (
+        r"(?:job\s+title|position|role)"
+        r"\s*[:\-]\s*([^\n]+)"
+    )
 
-    match = re.search(pattern, text, re.IGNORECASE)
+    match = re.search(explicit_pattern, text, re.IGNORECASE)
 
     if match:
-        return match.group(1).strip()
+        title = match.group(1).strip()
+        title = re.sub(r"[*#`]", "", title).strip()
+
+        if title:
+            return title
+
+    # Fallback: use the first meaningful line as the job title.
+    ignored_headings = {
+        "job description",
+        "job details",
+        "job overview",
+        "about the job",
+        "about the role",
+        "company",
+        "department",
+        "employment type",
+        "experience required",
+    }
+
+    for line in text.splitlines():
+        cleaned = re.sub(r"^\s*#+\s*", "", line)
+        cleaned = re.sub(r"^\s*[-*•]\s*", "", cleaned)
+        cleaned = re.sub(r"[*#`]", "", cleaned)
+        cleaned = cleaned.strip()
+
+        if not cleaned:
+            continue
+
+        normalized = cleaned.lower().rstrip(":")
+
+        if normalized in ignored_headings:
+            continue
+
+        if re.match(
+            r"^(company|department|employment\s+type|work\s+mode|"
+            r"experience\s+required)\s*:",
+            cleaned,
+            re.IGNORECASE,
+        ):
+            continue
+
+        return cleaned
 
     return None
 
 
-def extract_required_and_preferred_skills(
-    text: str,
-) -> dict:
-    """Identify skills in required and preferred sections."""
+def extract_required_and_preferred_skills(text: str) -> dict:
+    """Identify required, preferred, and general skills."""
 
     required_skills = set()
     preferred_skills = set()
@@ -90,6 +144,7 @@ def extract_required_and_preferred_skills(
 
             continue
 
+        # Stop collecting skills when a new section begins.
         if normalized.endswith(":"):
             current_section = "general"
             continue
@@ -105,7 +160,6 @@ def extract_required_and_preferred_skills(
     all_skills = set(extract_skills(text))
 
     classified_skills = required_skills | preferred_skills
-
     general_skills = all_skills - classified_skills
 
     return {
