@@ -1,248 +1,236 @@
-# AI Resume Screening & Candidate Ranking System
+# HireAI — AI Resume Screening & Candidate Ranking System
 
-An AI-assisted resume screening application that extracts information
-from PDF and DOCX resumes, processes candidate text, identifies relevant
-skills, and helps compare and rank applicants against job requirements
-through an interactive Streamlit interface.
+HireAI is a Python and Streamlit-based resume screening application that extracts structured information from PDF and DOCX resumes, compares candidate profiles with a job description, and presents explainable candidate match scores to support recruiter review.
 
-> **Project status:** This repository is being prepared for its initial
-> public release. Review the configuration and sample data before
-> publishing. Do not upload real candidate resumes, personally
-> identifiable information, credentials, or confidential recruitment
-> data.
+> **Important:** HireAI is a decision-support project, not an automated hiring system. Its extracted information and match scores can be incomplete or inaccurate. A qualified human reviewer must assess candidates using job-related criteria. Do not use the score as the sole basis for hiring or rejection.
 
 ## Overview
 
-Manually reviewing a large number of resumes can be time-consuming. This
-project streamlines parts of that workflow by:
+Reviewing many resumes manually can be time-consuming. HireAI streamlines parts of the initial review process by:
 
--   Reading resume files in **PDF** and **DOCX** formats.
--   Extracting and cleaning resume text.
--   Processing text with **spaCy lemmatization**.
--   Identifying skills using curated regular-expression patterns.
--   Organizing extracted skills into categories and supporting custom
-    skills.
--   Supporting candidate comparison and ranking for a job requirement.
--   Providing a Streamlit-based interface for interacting with the
-    workflow.
-
-The system is intended to assist recruiters and developers with resume
-analysis. Its output should be treated as decision-support information,
-not as an automated hiring decision.
+- Extracting text from PDF and DOCX resumes.
+- Cleaning and preprocessing resume text.
+- Identifying skills and grouping them by category.
+- Extracting experience and education information.
+- Parsing job descriptions for role, skills, experience, and education requirements.
+- Comparing candidate profiles against job requirements.
+- Ranking candidates using configurable, weighted matching criteria.
+- Displaying candidate analysis and reports through a Streamlit interface.
 
 ## Key Features
 
--   **Resume parsing:** Extract text from PDF and Word documents.
--   **Text preprocessing:** Clean and normalize extracted resume
-    content.
--   **Lemmatization:** Process text using spaCy.
--   **Skill extraction:** Detect skills with curated regex patterns.
--   **Categorized skills:** Return skills grouped by category, alongside
-    extracted skills.
--   **Candidate ranking:** Compare candidate profiles with job
-    requirements and display ranking results.
--   **Streamlit UI:** Use the application through a browser-based
-    interface.
--   **Tests:** Run the project's automated test suite with pytest.
+- **PDF and DOCX parsing:** Reads text from supported resume formats.
+- **Resume information extraction:** Builds candidate profiles containing skills, experience, and education details.
+- **Job description parsing:** Identifies job title, required/preferred skills, minimum experience, and education requirements.
+- **Skill matching:** Compares extracted candidate skills with required job skills and identifies matched and missing skills.
+- **Text similarity:** Uses TF-IDF vectorization and cosine similarity to estimate similarity between resume text and the job description.
+- **Experience matching:** Compares extracted experience with the minimum experience requirement.
+- **Education matching:** Evaluates available qualification and field-of-study information.
+- **Candidate ranking:** Sorts candidates by calculated match score and keeps candidates with insufficient information unscored.
+- **Interactive interface:** Provides Dashboard, Analyze Resumes, Candidates, Analytics, Reports, and Settings sections.
+- **CSV reporting:** Generates a candidate ranking report.
+- **Automated tests:** Includes pytest tests for the processing, extraction, matching, scoring, ranking, and reporting modules.
+
+## Candidate Matching & Score Weights
+
+HireAI's default scoring configuration uses four criteria:
+
+| Matching criterion | Default weight |
+|---|---:|
+| Skills match | 40% |
+| Job description text similarity | 30% |
+| Experience match | 20% |
+| Education match | 10% |
+| **Total** | **100%** |
+
+The weights are defined in `src/scoring_engine.py` and can be overridden when calling the scoring and ranking functions.
+
+### How the criteria are calculated
+
+- **Skills match:** Measures the proportion of required skills found in the candidate's extracted skills.
+- **Text similarity:** Uses TF-IDF with unigrams and bigrams, followed by cosine similarity, to compare processed resume text with the job description.
+- **Experience match:** Compares the candidate's extracted experience with the job's minimum experience requirement, capped at 100% when the requirement is met or exceeded.
+- **Education match:** Uses the project's education-matching logic to evaluate available qualification and field-of-study information.
+
+**Missing evidence is not automatically treated as a zero score.** A criterion is included only when the information needed to evaluate it is available. The active weights are then normalized to calculate the overall score. If no criterion can be evaluated, the candidate receives an `insufficient_data` status and no overall score.
+
+These are configurable matching heuristics, not a validated measure of candidate quality or future job performance.
 
 ## Technology Stack
 
-  Area                          Technology
-  ----------------------------- ---------------------
-  Programming language          Python
-  User interface                Streamlit
-  Natural language processing   spaCy
-  Text processing               Python
-  Skill extraction              Regular expressions
-  Document formats              PDF, DOCX
-  Automated testing             pytest
+| Area | Technologies |
+|---|---|
+| Language | Python |
+| User interface | Streamlit |
+| Data handling | Pandas, NumPy |
+| NLP and text processing | spaCy, regular expressions |
+| Similarity and matching | Scikit-learn (TF-IDF, cosine similarity) |
+| PDF processing | PyMuPDF |
+| DOCX processing | python-docx |
+| Fuzzy matching | RapidFuzz |
+| Visualizations | Plotly |
+| Testing | pytest |
 
-The exact package versions are maintained in
-[`requirements.txt`](requirements.txt).
+Dependency requirements are listed in [`requirements.txt`](requirements.txt).
 
 ## Project Structure
 
-``` text
+```text
 AI-Resume-Screening-System/
 │
-├── app.py                         # Streamlit application entry point
-├── requirements.txt               # Python dependencies
+├── app.py                         # Streamlit application
+├── requirements.txt               # Project dependencies
 ├── README.md                      # Project documentation
-├── .gitignore                     # Files excluded from Git
+├── .gitignore                     # Ignored files and local data
 │
 ├── .streamlit/
-│   └── config.toml                # Streamlit theme configuration
+│   └── config.toml                # Streamlit configuration
 │
 ├── assets/
 │   └── style.css                  # Application styling
 │
 ├── data/
-│   ├── sample_data/               # Synthetic/sample resumes for testing
-│   └── processed/                 # Generated output (excluded from Git)
+│   ├── sample_data/               # Sample PDF and DOCX resumes
+│   └── processed/                 # Generated reports (ignored by Git)
 │
-├── src/                           # Application and processing modules
+├── src/
+│   ├── candidate_ranker.py        # Candidate sorting and ranking
+│   ├── document_processor.py      # PDF and DOCX text extraction
+│   ├── education_extractor.py     # Education extraction
+│   ├── experience_extractor.py    # Experience extraction
+│   ├── job_description_parser.py  # Job requirement parsing
+│   ├── matching_engine.py         # Skills, text, experience, education matching
+│   ├── report_generator.py        # Candidate report generation
+│   ├── resume_parser.py           # Resume-to-profile processing pipeline
+│   ├── scoring_engine.py          # Weighted candidate scoring
+│   ├── skill_extractor.py         # Skill extraction and categorization
+│   └── text_preprocessor.py       # Text cleaning and preprocessing
 │
 └── tests/
-    ├── create_sample_resumes.py   # Generates sample resumes
-    └── ...                        # Automated tests
+    ├── create_sample_resumes.py   # Generate sample resume files
+    └── test_*.py                  # Automated tests for project modules
 ```
-
-Some directories may contain additional modules or files as the project
-evolves. Generated reports and local cache files should remain outside
-version control.
 
 ## Requirements
 
--   Python installed on your system.
--   pip, Python's package installer.
--   Git, if cloning the repository.
--   A terminal such as PowerShell, Command Prompt, or a Unix shell.
+- Python installed on your system.
+- `pip` for installing Python packages.
+- Git to clone the repository.
+- A terminal such as PowerShell, Command Prompt, or a Unix shell.
 
-Use a Python version supported by the packages pinned in
-`requirements.txt`.
+Use a Python version compatible with the packages in `requirements.txt`.
 
-## Installation
+## Installation & Setup
 
 ### 1. Clone the repository
 
-``` bash
+```bash
 git clone https://github.com/meezanshaikh18/AI-Resume-Screening-System.git
 cd AI-Resume-Screening-System
 ```
 
 ### 2. Create a virtual environment
 
-**Windows PowerShell:**
+**Windows PowerShell**
 
-``` powershell
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-If PowerShell blocks activation for the current terminal session, run:
+If PowerShell blocks activation in the current terminal session, run:
 
-``` powershell
+```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
 
-**macOS / Linux:**
+**macOS / Linux**
 
-``` bash
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Upgrade pip and install dependencies
+### 3. Install dependencies
 
-``` bash
+```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-If the project reports that a spaCy language model is missing, install
-the English model used by the application:
+If the application reports that the spaCy English model is missing, install it with:
 
-``` bash
+```bash
 python -m spacy download en_core_web_sm
 ```
 
 ## Run the Application
 
-From the project root, with the virtual environment activated:
+From the project root, with the virtual environment activated, run:
 
-``` bash
-streamlit run app.py
+```bash
+python -m streamlit run app.py
 ```
 
-Streamlit will print a local URL in the terminal (typically
-`http://localhost:8501`). Open that address in your browser.
+Streamlit will display a local address in the terminal, usually `http://localhost:8501`. Open that address in your browser.
 
 To stop the application, press `Ctrl + C` in the terminal.
 
 ## Generate Sample Resumes
 
-The project includes a helper script for generating sample resumes in
-`data/sample_data/`.
+The repository includes a helper script that generates sample resume files for local testing:
 
-``` bash
+```bash
 python tests/create_sample_resumes.py
 ```
 
-Use generated or otherwise synthetic resumes when testing. Do not use
-real candidate documents in a public repository or test environment
-unless you have the appropriate authorization and safeguards.
+Use synthetic/sample documents when testing. Do not add real candidate resumes or personal information to the repository.
 
 ## Run Tests
 
-Install the dependencies first, then run:
+Run the automated test suite from the project root:
 
-``` bash
+```bash
 python -m pytest tests/ -v
 ```
 
-The test suite covers the project's resume-processing and
-skill-extraction functionality. Add or update tests when changing
-parsing, preprocessing, extraction, or ranking behavior.
+The tests cover candidate profiles, document extraction and processing, resume parsing, job-description parsing, skill/experience/education extraction, matching, scoring, ranking, and report generation.
 
-## Expected Resume-Processing Output
+## Data & Privacy
 
-The resume-processing module returns structured information including
-fields such as:
+Resumes can contain sensitive personal information. Follow these precautions:
 
--   `file_name`
--   `file_type`
--   `raw_text`
--   `cleaned_text`
--   `processed_text`
--   `skills`
--   `skills_by_category`
-
-The exact output and ranking details are determined by the current
-implementation in `src/`.
-
-## Data, Privacy & Security
-
-Resumes can contain sensitive personal information. Follow these
-precautions:
-
--   Use synthetic resumes for development and demonstrations.
--   Do not commit real resumes, candidate contact details, or personally
-    identifiable information.
--   Do not commit `.env` files, API keys, passwords, tokens, or
-    Streamlit secrets.
--   Review generated CSV reports before sharing them. The
-    `data/processed/` directory is ignored by Git.
--   Store production candidate data securely and apply appropriate
-    access controls, retention rules, and consent requirements.
--   Treat extracted skills and ranking results as fallible; review
-    candidates fairly and keep a human decision-maker involved.
+- Use synthetic resumes for development, testing, and demonstrations.
+- Do not commit real resumes, candidate names, contact details, or other personally identifiable information.
+- Do not commit passwords, API keys, access tokens, `.env` files, or Streamlit secrets.
+- Review generated reports before sharing them. The `data/processed/` directory is excluded from version control by the repository's `.gitignore`.
+- For any real-world use, apply appropriate authorization, consent, access controls, secure storage, and data-retention practices.
+- Review extracted information and matching results for errors, missing context, and potential bias.
 
 ## Troubleshooting
 
 ### `streamlit` is not recognized
 
-Make sure the virtual environment is activated, then run:
+Ensure the virtual environment is activated and dependencies are installed. You can launch Streamlit through Python:
 
-``` bash
-python -m pip install -r requirements.txt
+```bash
 python -m streamlit run app.py
 ```
 
 ### A Python package is missing
 
-Install the project's dependencies again:
+Reinstall the project dependencies in the active environment:
 
-``` bash
+```bash
 python -m pip install -r requirements.txt
 ```
 
-### spaCy model error
+### spaCy language model is missing
 
-If the application specifically reports that `en_core_web_sm` is
-missing, run:
+Install the English model:
 
-``` bash
+```bash
 python -m spacy download en_core_web_sm
 ```
 
@@ -250,43 +238,47 @@ python -m spacy download en_core_web_sm
 
 Run pytest from the repository root:
 
-``` bash
+```bash
 python -m pytest tests/ -v
 ```
 
-## Future Improvements
+## Potential Future Improvements
 
-Potential areas for further development include:
-
--   More robust resume parsing across different document layouts.
--   Expanded skill dictionaries and configurable skill categories.
--   Transparent, explainable candidate-matching criteria.
--   Additional test coverage for ranking and edge cases.
--   Secure persistence and audit trails for authorized deployments.
+- Improve parsing for resumes with complex layouts, tables, and scanned pages.
+- Expand and maintain skill dictionaries and configurable skill categories.
+- Add more transparent explanations for each matching criterion.
+- Expand tests for unusual document formats and extraction edge cases.
+- Add secure, access-controlled storage and audit trails for authorized deployments.
 
 ## Contributing
 
-Contributions and suggestions are welcome.
+Suggestions and contributions are welcome:
 
-1.  Fork the repository.
-2.  Create a feature branch.
-3.  Make your changes and add relevant tests.
-4.  Run the test suite.
-5.  Open a pull request describing the changes.
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes and add or update relevant tests.
+4. Run the test suite.
+5. Open a pull request describing your changes.
 
 ## Disclaimer
 
-This project is for educational, development, and decision-support
-purposes. Resume parsing and skill matching may be incomplete or
-inaccurate. Do not use automated scores or rankings as the sole basis
-for hiring, rejection, or other employment decisions. Evaluate
-candidates using job-related criteria, human review, and applicable
-employment and privacy requirements.
+HireAI is an educational and decision-support project. Resume parsing, information extraction, and candidate matching may be incomplete, inaccurate, or affected by the quality and format of the supplied documents. Match scores are heuristic estimates, not objective measures of candidate ability. Do not use automated scores or rankings as the sole basis for hiring, rejection, or other employment decisions. Keep a human decision-maker involved and evaluate candidates fairly using relevant job criteria and applicable privacy and employment requirements.
 
-## Author
+## Acknowledgements
 
-**Meezan Shaikh**
+- [Python](https://www.python.org/)
+- [Streamlit](https://streamlit.io/)
+- [Scikit-learn](https://scikit-learn.org/)
+- [spaCy](https://spacy.io/)
+- [PyMuPDF](https://pymupdf.readthedocs.io/)
+- [Plotly](https://plotly.com/python/)
 
--   GitHub: [@meezanshaikh18](https://github.com/meezanshaikh18)
--   LinkedIn: [Meezan Shaikh](https://www.linkedin.com/in/meezanshaikh18/)
-    
+## Connect With Me
+
+I'm always open to connecting with fellow developers, collaborating on interesting projects, and exploring opportunities in AI/ML.
+
+- **GitHub:** [GitHub Profile](https://github.com/meezanshaikh18)
+- **LinkedIn:** [LinkedIn Profile](https://www.linkedin.com/in/meezanshaikh18/)
+- **Portfolio:** [Portfolio Website](https://meezan-shaikh-portfolio-meezan-shaikhs-projects-081392b8.vercel.app/)
+
+If you find this project interesting, consider giving the repository a ⭐ star!
